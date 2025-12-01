@@ -20,7 +20,10 @@ unsigned char op;
 char flag;
 #define REG_SIZE_CHARS (1+'z'-'a')*REG_SIZE+STACK_SIZE
 #define REG_SIZE_INTS REG_SIZE_CHARS / sizeof(int)
-union reg_t { char c[REG_SIZE_CHARS]; int i[REG_SIZE_INTS]; } reg;
+union reg_t { 
+    char c[REG_SIZE_CHARS]; 
+    int i[REG_SIZE_INTS]; 
+    } reg;
 //1 indexed array of registers. 0 is "no register found"
 //Code memory for programs. Could be FLASH or EEPROM
 char mem[MEM_SIZE];
@@ -150,14 +153,14 @@ int read_device(int src) {
 void do_it() {
 	//convert src and dst into the values at thier addresses for width
 	//TODO support widths
-	int src_val = 0;
+	int src_val = num;
 	if (src <= sizeof(reg.c)) { //register
-		src_val = reg.c[(int)src] + num; 
+		src_val = reg.i[(int)src] + num; 
         printf("src:%d %c val:%d. ", src, src/REG_SIZE, src_val);
 	} else { //otherwise it's a device
 		src_val = read_device(src);
 	}
-	int dst_val = reg.c[(int)dst]; 
+	int dst_val = reg.i[(int)dst]; 
 	//use num if no source
 	switch(op) {
 		case ':': dst_val = src_val; break;
@@ -257,5 +260,12 @@ int main(void) {
 		} while(!done()); //do we have everything? do it! repeat op and source
 	}
 	printf("mem: %s.",mem);
+    printf("\nreg:");
+    for(char i = 'a'; i<'z'; i++) {
+        int v = reg.i[REG(i)];
+        if (v) {
+            printf("\n%c:%d", i, v);
+        }
+    }
 	return 0;
 }
