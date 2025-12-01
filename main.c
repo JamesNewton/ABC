@@ -1,5 +1,5 @@
 // ABC: A human readable byte-code language
-// http://t...content-available-to-author-only...d.org/techref/idea/minimalcontroller.htm
+// https://massmind.org/techref/idea/minimalcontroller.htm
 
 #include <stdio.h>
 //yeah I know. But I think these are cool, so:
@@ -132,7 +132,7 @@ void operation() {
 					get_inst();
 				} 
 			get_inst(); //move past closing quote
-			printf("\"\n");
+			printf("\"");
 			}
 		}
 		printf(" op:%d.c:%d",op,c);
@@ -152,7 +152,8 @@ void do_it() {
 	//TODO support widths
 	int src_val = 0;
 	if (src <= sizeof(reg.c)) { //register
-		src_val = reg.c[(int)src] + num; printf("src:%d %c val:%d. ", src, src/REG_SIZE, src_val);
+		src_val = reg.c[(int)src] + num; 
+        printf("src:%d %c val:%d. ", src, src/REG_SIZE, src_val);
 	} else { //otherwise it's a device
 		src_val = read_device(src);
 	}
@@ -185,7 +186,7 @@ void do_it() {
 				break;
 		}
 	}
-	printf("dst:%d %c val:%d.\n", dst, dst/REG_SIZE, dst_val);
+	printf("dst:%d %c val:%d.", dst, dst/REG_SIZE, dst_val);
 	//look ahead for conditionals //TODO should this be under operation?
 	switch(c) {
 		case '?': 
@@ -202,11 +203,20 @@ void do_it() {
 
 int done() { 
 	if (dst && op &&  (src || num)) {
-		printf("\nDO: %c+%d %c= %c %d +#: %d. c:%c %d\n", dst/REG_SIZE+'`', dst % REG_SIZE, op, src/REG_SIZE+'`', src % REG_SIZE, num, c, c);
+		printf("\nDO: %c+%d %c= %c %d +#: %d. c:%d '%c' \n", 
+            dst/REG_SIZE+'`', 
+            dst % REG_SIZE, 
+            op, 
+            src/REG_SIZE+'`', 
+            src % REG_SIZE, 
+            num, 
+            c,
+            c > 32? c : 32
+        );
 		do_it();
 		op = src = 0;
 	}
-	if ('\n' == c) { printf(" line end\n");
+	if ('\n' == c) { printf(" EOL ");
 		get_inst(); //if you used it, replace it.
 		num = dst = src = op = 0;
 		return TRUE; 
