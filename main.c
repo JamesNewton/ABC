@@ -57,7 +57,7 @@ void skip_line() {
 		) { 
 		get_inst(); 
 		}
-	printf(" past %d\n", c);
+	printf(" past %d '%c'\n", c, c);
 	get_inst(); 
 }
 int if_number(char c) {
@@ -198,6 +198,7 @@ void do_it() {
 			dst = op = src = num = 0;
 			break;
 		case '!':
+            get_inst();
 			skip_line();
 			break;
 		case '.': c=0; return;//TODO up stack to top. For now, just return
